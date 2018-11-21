@@ -10,6 +10,24 @@ const router = express.Router();
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 
+router.get('/', (req, res, next) => {
+    res.contentType = 'text/html';
+    res.send(`
+    <html>
+    <form action="/feed" method="post">
+      <label for="title">Title:</label>
+      <br />
+      <input type="text" name="title" />
+      <br />
+      <label for="podcasts">Podcast URLs</label> <span>One per line.</span>
+      <br />
+      <textarea name="podcasts"></textarea>
+      <br />
+      <button type="submit">submit</button>
+    </form>
+    </html>`);
+});
+
 router.post('/', async (req, res, next) => {
     const { title, podcasts } = req.body;
     try {
