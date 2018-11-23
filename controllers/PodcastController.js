@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const { fetchPodcastXml, parsePodcastXml } = require('../feed/cleaner-fetcher');
+
 const Podcast = require('../db/models/Podcast');
 
 const router = express.Router();
@@ -57,6 +59,22 @@ router.get('/:id/', async (req, res, next) => {
       .contentType('application/json')
       .status(200)
       .send(mapPodcast(podcast));
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get('/:id/fetch', async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const podcast = await Podcast.findOne({ id }).exec();
+    const xml = await fetchPodcastXml(podcast.url);
+    const json = await parsePodcastXml(xml);
+
+    // hmmm.
+
+    res.contentType('application/json').send(JSON.stringify(json, null, '  '));
   } catch (e) {
     next(e);
   }

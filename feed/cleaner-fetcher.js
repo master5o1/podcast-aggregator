@@ -3,7 +3,7 @@ const parsePodcast = require('node-podcast-parser');
 
 const fetchPodcastXml = async url => {
   const response = await fetch(url);
-  if (response.ok) {
+  if (!response.ok) {
     throw Error(response.statusText);
   }
   const text = await response.text();
@@ -15,7 +15,7 @@ const fetchPodcastXml = async url => {
 };
 
 const parsePodcastXml = async xml => {
-  new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     parsePodcast(xml, (err, data) => {
       if (err) {
         reject(err);
@@ -24,3 +24,6 @@ const parsePodcastXml = async xml => {
     });
   });
 };
+
+module.exports.fetchPodcastXml = fetchPodcastXml;
+module.exports.parsePodcastXml = parsePodcastXml;
