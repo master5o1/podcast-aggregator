@@ -124,7 +124,11 @@ router.get('/:id/fetch', async (req, res, next) => {
 
     podcast.save();
 
-    res.contentType('application/json').send(mapPodcastWithData(podcast));
+    res.contentType('application/json').send({
+      id: podcast.id,
+      fetched: episodes.length,
+      total: podcast.data.episodes.length
+    });
   } catch (e) {
     next(e);
   }
