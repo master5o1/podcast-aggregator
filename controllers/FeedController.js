@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const Feed = require('../db/models/Feed');
 const Podcast = require('../db/models/Podcast');
 
-const aggregator = require('../feed/fetching-aggregator');
+const { aggregate } = require('../feed/utils');
 
 const router = express.Router();
 
@@ -24,7 +24,12 @@ const mapFeed = (feed, authKey = false) => ({
 router.get('/', async (req, res, next) => {
   try {
     const feeds = await Feed.find()
-      .populate('podcasts')
+      .populate({
+        path: 'podcasts',
+        populate: {
+          path: 'data.episodes'
+        }
+      })
       .exec();
 
     res
@@ -75,7 +80,12 @@ router.get('/:id.rss', async (req, res, next) => {
   const { id } = req.params;
   try {
     const feed = await Feed.findOne({ id })
-      .populate('podcasts')
+      .populate({
+        path: 'podcasts',
+        populate: {
+          path: 'data.episodes'
+        }
+      })
       .exec();
 
     if (feed === null) {
@@ -83,7 +93,7 @@ router.get('/:id.rss', async (req, res, next) => {
       return;
     }
 
-    const xml = await aggregator(feed);
+    const xml = aggregate(feed);
 
     res
       .contentType('application/xml')
@@ -99,7 +109,12 @@ router.get('/:id', async (req, res, next) => {
 
   try {
     const feed = await Feed.findOne({ id })
-      .populate('podcasts')
+      .populate({
+        path: 'podcasts',
+        populate: {
+          path: 'data.episodes'
+        }
+      })
       .exec();
 
     if (feed === null) {
