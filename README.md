@@ -6,9 +6,7 @@ Why? I want to make it easier for me to manage my podcasts aacross clients while
 
 ## TODO
 
-- Some sort of `/podcast/:id/fetch` to fetch latest episodes and store information in the db.
-  - Perhaps use `Batch` and `Episode` entities to represent each run.
-- `/feed/:id.rss` should retrieve the latest episode information from db instead of fetching directly.
+- Figure out some scheduled fetcher that can call the `/podcast/:id/fetch` requests to get new episodes into the db.
 - Output RSS feed should have some sort of episode filtering.
   - Perhaps some `/feed/:id/filters` type thing to add/remove them, are these just a list of strings to match against?
   - Are they tied to a specific `Podcast`? ie, is the filter `"Australia Correspondent"` only to be applied upon `Nine to Noon`?

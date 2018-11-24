@@ -52,7 +52,6 @@ const aggregate = feed => {
   }
 
   const xml = builder.buildXml({ indent: '  ' });
-  console.log(xml);
   return xml;
 };
 
