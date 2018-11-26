@@ -9,6 +9,7 @@
   "author": "Jason Schwarzenberger",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
     "command-line-args": "^5.0.2",
     "express": "^4.16.4",
@@ -16,6 +17,8 @@
     "mongoose": "^5.3.13",
     "node-fetch": "^2.3.0",
     "node-podcast-parser": "^2.3.0",
+    "passport": "^0.4.0",
+    "passport-http": "^0.3.0",
     "podcast": "^1.1.0",
     "shortid": "^2.2.14",
     "uid-generator": "^1.0.0"
