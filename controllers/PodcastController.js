@@ -1,10 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const { fetchPodcastXml, parsePodcastXml } = require('../feed/utils');
-
 const Podcast = require('../db/models/Podcast');
-const Episode = require('../db/models/Episode');
+const fetchPodcast = require('../feed/fetch-podcast');
 
 const router = express.Router();
 
@@ -106,29 +104,9 @@ router.get('/:id/fetch', async (req, res, next) => {
       return;
     }
 
-    const xml = await fetchPodcastXml(podcast.url);
-    const json = await parsePodcastXml(xml);
+    const data = await fetchPodcast(podcast);
 
-    const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-    const episodes = await Promise.all(
-      json.episodes.map(async episode => {
-        return await Episode.findOneAndUpdate({ 'enclosure.url': episode.enclosure.url }, episode, options);
-      })
-    );
-
-    podcast.data = {
-      ...podcast.data,
-      ...json,
-      episodes: [...podcast.data.episodes, ...episodes]
-    };
-
-    podcast.save();
-
-    res.contentType('application/json').send({
-      id: podcast.id,
-      fetched: episodes.length,
-      total: podcast.data.episodes.length
-    });
+    res.contentType('application/json').send(data);
   } catch (e) {
     next(e);
   }

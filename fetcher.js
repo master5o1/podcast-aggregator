@@ -1,10 +1,8 @@
 const mongoose = require('mongoose');
 const commandLineArgs = require('command-line-args');
 
-const { fetchPodcastXml, parsePodcastXml } = require('./feed/utils');
-
 const Podcast = require('./db/models/Podcast');
-const Episode = require('./db/models/Episode');
+const fetchPodcast = require('./feed/fetch-podcast');
 
 const optionDefinitions = [
   { name: 'id', alias: 'i', type: String },
@@ -15,46 +13,19 @@ const options = commandLineArgs(optionDefinitions);
 
 mongoose.connect(options.mongo || 'mongodb://localhost:27017/podcasts');
 
-const fetchPodcast = async podcast => {
-  if (!podcast) {
-    res.sendStatus(404);
-    return;
-  }
+const fetchOne = async id => {
+  const podcast = await Podcast.findOne({ id })
+    .populate('data.episodes')
+    .exec();
 
-  const xml = await fetchPodcastXml(podcast.url);
-  const json = await parsePodcastXml(xml);
-
-  const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-  const episodes = await Promise.all(
-    json.episodes.map(async episode => {
-      return await Episode.findOneAndUpdate({ 'enclosure.url': episode.enclosure.url }, episode, options);
-    })
-  );
-
-  podcast.data = {
-    ...podcast.data,
-    ...json,
-    episodes: [...podcast.data.episodes, ...episodes]
-  };
-
-  podcast.save();
-
-  return {
-    id: podcast.id,
-    fetched: episodes.length,
-    total: podcast.data.episodes.length
-  };
+  console.log(`fetching podcast ${podcast.id}: ${podcast.url}`);
+  const done = await fetchPodcast(podcast);
+  console.log(done);
 };
 
 const init = async options => {
   if (options.id) {
-    const podcast = await Podcast.findOne({ id: options.id })
-      .populate('data.episodes')
-      .exec();
-
-    console.log(`fetching podcast ${podcast.id}: ${podcast.url}`);
-    const done = await fetchPodcast(podcast);
-    console.log(done);
+    await fetchOne(options.id);
     return;
   }
   console.log('fetching list of podcasts');
@@ -63,9 +34,7 @@ const init = async options => {
     .exec();
 
   for (let podcast of podcasts) {
-    console.log(`fetching podcast ${podcast.id}: ${podcast.url}`);
-    const done = await fetchPodcast(podcast);
-    console.log(done);
+    await fetchOne(podcast.id);
   }
   console.log('finished.');
 };

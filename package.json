@@ -12,6 +12,7 @@
     "body-parser": "^1.18.3",
     "command-line-args": "^5.0.2",
     "express": "^4.16.4",
+    "lodash.uniqby": "^4.7.0",
     "mongoose": "^5.3.13",
     "node-fetch": "^2.3.0",
     "node-podcast-parser": "^2.3.0",

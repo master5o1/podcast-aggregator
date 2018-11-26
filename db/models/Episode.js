@@ -15,7 +15,7 @@ const EpisodeSchema = new mongoose.Schema({
   guid: String,
   title: String,
   description: String,
-  explicity: Boolean,
+  explicit: Boolean,
   image: String,
   published: Date,
   duration: Number,
