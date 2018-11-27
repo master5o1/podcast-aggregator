@@ -1,43 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 
 const Podcast = require('../db/models/Podcast');
-const fetchPodcast = require('../feed/fetch-podcast');
+const fetchPodcast = require('../utils/fetch-podcast');
+const { mapPodcast, mapPodcastWithData } = require('../utils/mappers');
 
 const router = express.Router();
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
-
-const mapPodcast = podcast => ({
-  id: podcast.id,
-  url: podcast.url
-});
-
-const mapEpisode = episode => ({
-  id: episode.id,
-  guid: episode.guid,
-  title: episode.title,
-  description: episode.description,
-  explicit: episode.explicit,
-  image: episode.image,
-  published: episode.published,
-  duration: episode.duration,
-  categories: episode.categories,
-  enclosure: {
-    filesize: episode.enclosure.filesize,
-    type: episode.enclosure.type,
-    url: episode.enclosure.url
-  }
-});
-
-const mapPodcastWithData = podcast => ({
-  ...mapPodcast(podcast),
-  data: {
-    ...podcast.data,
-    episodes: podcast.data.episodes.map(mapEpisode)
-  }
-});
+router.use(passport.authenticate('basic', { session: false }));
 
 router.get('/', async (req, res, next) => {
   try {

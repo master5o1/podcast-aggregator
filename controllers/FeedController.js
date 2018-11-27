@@ -1,25 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const passport = require('passport');
 
 const Feed = require('../db/models/Feed');
 const Podcast = require('../db/models/Podcast');
-
-const { aggregate } = require('../feed/utils');
+const aggregate = require('../utils/aggregate-to-xml');
+const { mapFeed } = require('../utils/mappers');
 
 const router = express.Router();
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
-
-const mapFeed = (feed, authKey = false) => ({
-  id: feed.id,
-  title: feed.title,
-  authKey: authKey ? feed.authKey : undefined,
-  podcasts: feed.podcasts.map(podcast => ({
-    id: podcast.id,
-    url: podcast.url
-  }))
-});
+router.use(passport.authenticate('basic', { session: false }));
 
 router.get('/', async (req, res, next) => {
   try {

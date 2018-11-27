@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const commandLineArgs = require('command-line-args');
 
 const Podcast = require('./db/models/Podcast');
-const fetchPodcast = require('./feed/fetch-podcast');
+const fetchPodcast = require('./utils/fetch-podcast');
 
 const optionDefinitions = [
   { name: 'id', alias: 'i', type: String },

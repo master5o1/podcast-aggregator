@@ -29,25 +29,15 @@ const UserSchema = new mongoose.Schema({
   }
 });
 
-UserSchema.pre('save', function(next) {
-  let user = this;
+UserSchema.pre('save', async function(next) {
+  const user = this;
 
   if (!user.isModified('password')) {
     return next();
   }
 
-  bcrypt.genSalt(SALT_WORK_FACTOR, (err, salt) => {
-    if (err) {
-      return next(err);
-    }
-    bcrypt.hash(user.password, salt, (err, hash) => {
-      if (err) {
-        return next(err);
-      }
-      user.password = hash;
-      next();
-    });
-  });
+  user.password = await bcrypt.hash(user.password, SALT_WORK_FACTOR);
+  next();
 });
 
 UserSchema.methods.verifyPassword = async function(candidatePassword) {

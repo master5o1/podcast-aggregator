@@ -1,41 +1,23 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
-const { BasicStrategy } = require('passport-http');
 
 const feedController = require('./controllers/FeedController');
 const podcastController = require('./controllers/PodcastController');
 const authController = require('./controllers/AuthController');
-
-const User = require('./db/models/User');
+const { basicStrategy } = require('./utils/auth');
 
 const app = express();
 
 mongoose.connect('mongodb://localhost:27017/podcasts');
 
-passport.use(
-  new BasicStrategy(async (username, password, done) => {
-    try {
-      const user = await User.findOne({ username }).exec();
-
-      if (!user) {
-        return done(null, null);
-      }
-
-      if (await user.verifyPassword(password)) {
-        return done(null, user);
-      }
-    } catch (e) {
-      done(err);
-    }
-  })
-);
+passport.use(basicStrategy);
 
 app.use('/feed', feedController);
 app.use('/podcast', podcastController);
 app.use('/auth', authController);
 
-app.get('/forms', (req, res, next) => {
+app.get('/forms', passport.authenticate('basic', { session: false }), (req, res, next) => {
   res.contentType('text/html').send(`
     <html>
     <form action="/feed" method="post" style="border: solid 1px #000; margin: 20px; padding: 20px;">
@@ -68,7 +50,7 @@ app.get('/forms', (req, res, next) => {
       <div>
         <label for="url">Password:</label>
         <br />
-        <input type="password" name="password" />
+        <input type="password" name="password" autocomplete="new-password" />
       </div>
       <button type="submit">submit</button>
     </form>

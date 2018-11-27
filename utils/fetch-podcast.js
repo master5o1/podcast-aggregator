@@ -1,6 +1,6 @@
 const uniqBy = require('lodash.uniqby');
-
-const { fetchPodcastXml, parsePodcastXml } = require('./utils');
+const fetchPodcastXml = require('./fetch-podcast-xml');
+const parsePodcastXml = require('./parse-podcast-xml');
 const Episode = require('../db/models/Episode');
 
 module.exports = async podcast => {
