@@ -5,6 +5,12 @@ const mapFeed = (feed, authKey = false) => ({
   podcasts: feed.podcasts.map(mapPodcast)
 });
 
+const mapFeedWithData = (feed) => ({
+  id: feed.id,
+  title: feed.title,
+  podcasts: feed.podcasts.map(mapPodcastWithData)
+});
+
 const mapPodcast = podcast => ({
   id: podcast.id,
   url: podcast.url
@@ -43,6 +49,7 @@ const mapUser = user => ({
 });
 
 module.exports.mapFeed = mapFeed;
+module.exports.mapFeedWithData = mapFeedWithData;
 module.exports.mapPodcast = mapPodcast;
 module.exports.mapEpisode = mapEpisode;
 module.exports.mapPodcastWithData = mapPodcastWithData;

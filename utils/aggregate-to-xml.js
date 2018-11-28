@@ -1,5 +1,6 @@
 const Podcast = require('podcast');
 const mergeEpisodes = require('./merge-episodes');
+const { mapEpisode } = require('./mappers');
 
 module.exports = feed => {
   const builder = new Podcast({ title: feed.title });
@@ -9,11 +10,11 @@ module.exports = feed => {
     const image = episode.podcast.data.image || '';
     const imageUrl = image.hasOwnProperty('url') ? image.url : image;
     builder.addItem({
-      ...episode.episode,
+      ...mapEpisode(episode.episode),
       date: episode.episode.published,
       description: `${episode.podcast.data.title}: ${episode.episode.description}`,
       itunesSummary: undefined,
-      itunesImage: episode.episode.itunesImage || imageUrl
+      itunesImage: episode.episode.itunesImage || imageUrl,
     });
   }
 
