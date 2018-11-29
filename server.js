@@ -9,7 +9,7 @@ const { basicStrategy } = require('./utils/auth');
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/podcasts');
+mongoose.connect(process.env.MONGO_CONNECTION || 'mongodb://localhost:27017/podcasts');
 
 passport.use(basicStrategy);
 
