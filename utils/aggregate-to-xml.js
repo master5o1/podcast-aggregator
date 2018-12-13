@@ -3,8 +3,14 @@ const mergeEpisodes = require('./merge-episodes');
 const { mapEpisode } = require('./mappers');
 
 module.exports = feed => {
-  const builder = new Podcast({ title: feed.title });
   const episodes = mergeEpisodes(feed.podcasts);
+
+  const builder = new Podcast({
+    title: feed.title,
+    pubDate: episodes.reduce((date, e) => {
+      return date < e.episode.published ? e.episode.published : date;
+    }, new Date(1970, 01, 01))
+  });
 
   for (let episode of episodes.slice(0, 100)) {
     const image = episode.podcast.data.image || '';

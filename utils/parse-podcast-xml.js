@@ -1,4 +1,4 @@
-const parsePodcast = require('node-podcast-parser');
+const parsePodcast = require('../libs/podcast-parser');
 
 module.exports = async xml => {
   return new Promise((resolve, reject) => {
