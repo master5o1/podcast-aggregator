@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const commandLineArgs = require('command-line-args');
 
-const User = require('./db/models/User');
+const User = require('../db/models/User');
 
 const optionDefinitions = [
   { name: 'username', alias: 'u', type: String },
