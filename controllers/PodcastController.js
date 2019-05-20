@@ -43,7 +43,51 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id/', async (req, res, next) => {
+router.get('/:id.rss', async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const podcast = await Podcast.findOne({ id })
+      .populate({ path: 'data.episodes' })
+      .exec();
+
+    if (podcast === null) {
+      res.sendStatus(404);
+      return;
+    }
+
+    const episodes = podcast.episodes;
+
+    const builder = new Podcast({
+      ...podcast.data,
+      pubDate: episodes.reduce((date, e) => {
+        return date < e.episode.published ? e.episode.published : date;
+      }, new Date(1970, 01, 01))
+    });
+
+    for (let episode of episodes.slice(0, 100)) {
+      const image = episode.podcast.data.image || '';
+      const imageUrl = image.hasOwnProperty('url') ? image.url : image;
+      builder.addItem({
+        ...mapEpisode(episode.episode),
+        date: episode.episode.published,
+        description: `${episode.podcast.data.title}: ${episode.episode.description}`,
+        itunesSummary: undefined,
+        itunesImage: episode.episode.itunesImage || imageUrl
+      });
+    }
+
+    const xml = builder.buildXml({ indent: '  ' });
+
+    res
+      .contentType('application/xml')
+      .status(200)
+      .send(xml);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get('/:id', async (req, res, next) => {
   const { id } = req.params;
   try {
     const podcast = await Podcast.findOne({ id })
