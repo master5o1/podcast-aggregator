@@ -55,24 +55,24 @@ router.get('/:id.rss', async (req, res, next) => {
       return;
     }
 
-    const episodes = podcast.episodes;
+    const episodes = podcast.data.episodes;
 
     const builder = new Podcast({
       ...podcast.data,
       pubDate: episodes.reduce((date, e) => {
-        return date < e.episode.published ? e.episode.published : date;
+        return date < e.published ? e.published : date;
       }, new Date(1970, 01, 01))
     });
 
     for (let episode of episodes.slice(0, 100)) {
-      const image = episode.podcast.data.image || '';
+      const image = podcast.data.image || '';
       const imageUrl = image.hasOwnProperty('url') ? image.url : image;
       builder.addItem({
-        ...mapEpisode(episode.episode),
-        date: episode.episode.published,
-        description: `${episode.podcast.data.title}: ${episode.episode.description}`,
+        ...mapEpisode(episode),
+        date: episode.published,
+        description: `${podcast.data.title}: ${episode.description}`,
         itunesSummary: undefined,
-        itunesImage: episode.episode.itunesImage || imageUrl
+        itunesImage: episode.itunesImage || imageUrl
       });
     }
 
