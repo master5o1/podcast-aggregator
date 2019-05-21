@@ -55,14 +55,15 @@ router.get('/:id.rss', async (req, res, next) => {
       return;
     }
 
-    console.log(Object.keys(podcast.data));
-    console.log(podcast.data.episodes);
+    const pubDate = podcast.data.episodes.reduce((date, e) => {
+      return date < e.published ? e.published : date;
+    }, new Date(1970, 01, 01));
+
+    console.log(pubDate);
 
     const builder = new Podcast({
       ...podcast.data,
-      pubDate: podcast.data.episodes.reduce((date, e) => {
-        return date < e.published ? e.published : date;
-      }, new Date(1970, 01, 01))
+      pubDate
     });
 
     for (let episode of episodes.slice(0, 100)) {
