@@ -18,7 +18,7 @@ module.exports = function parse(feedXML, callback) {
 
   var tmpEpisode;
 
-  parser.onopentag = function (nextNode) {
+  parser.onopentag = function(nextNode) {
     node = {
       name: nextNode.name,
       attributes: nextNode.attributes,
@@ -33,9 +33,9 @@ module.exports = function parse(feedXML, callback) {
       // root channel
       node.target = result;
       node.textMap = {
-        'title': true,
-        'link': true,
-        'language': function language(text) {
+        title: true,
+        link: true,
+        language: function language(text) {
           var lang = text;
           if (!/\w\w-\w\w/i.test(text)) {
             if (lang === 'en') {
@@ -50,11 +50,11 @@ module.exports = function parse(feedXML, callback) {
         },
         'itunes:author': 'author',
         'itunes:subtitle': 'description.short',
-        'description': 'description.long',
-        'ttl': function ttl(text) {
+        description: 'description.long',
+        ttl: function ttl(text) {
           return { ttl: parseInt(text) };
         },
-        'pubDate': function pubDate(text) {
+        pubDate: function pubDate(text) {
           return { updated: new Date(text) };
         },
         'itunes:explicit': isExplicit,
@@ -65,7 +65,7 @@ module.exports = function parse(feedXML, callback) {
     } else if (node.name === 'image' && node.parent.name === 'channel' && !result.image) {
       result.image = node.target = {};
       node.textMap = {
-        'url': true
+        url: true
       };
     } else if (node.name === 'itunes:owner' && node.parent.name === 'channel') {
       result.owner = node.target = {};
@@ -94,24 +94,28 @@ module.exports = function parse(feedXML, callback) {
       tmpEpisode = {};
       node.target = tmpEpisode;
       node.textMap = {
-        'title': true,
-        'guid': true,
+        title: true,
+        guid: true,
+        link: true,
         'itunes:summary': 'description.primary',
-        'description': 'description.alternate',
-        'pubDate': function pubDate(text) {
+        description: 'description.alternate',
+        pubDate: function pubDate(text) {
           return { published: new Date(text) };
         },
         'itunes:duration': function itunesDuration(text) {
           return {
             // parse '1:03:13' into 3793 seconds
-            duration: text.split(':').reverse().reduce(function (acc, val, index) {
-              var steps = [60, 60, 24];
-              var muliplier = 1;
-              while (index--) {
-                muliplier *= steps[index];
-              }
-              return acc + parseInt(val) * muliplier;
-            }, 0)
+            duration: text
+              .split(':')
+              .reverse()
+              .reduce(function(acc, val, index) {
+                var steps = [60, 60, 24];
+                var muliplier = 1;
+                while (index--) {
+                  muliplier *= steps[index];
+                }
+                return acc + parseInt(val) * muliplier;
+              }, 0)
           };
         },
         'itunes:explicit': isExplicit,
@@ -134,7 +138,7 @@ module.exports = function parse(feedXML, callback) {
     }
   };
 
-  parser.onclosetag = function (name) {
+  parser.onclosetag = function(name) {
     node = node.parent;
 
     if (tmpEpisode && name === 'item') {
@@ -192,10 +196,10 @@ module.exports = function parse(feedXML, callback) {
     }
   };
 
-  parser.onend = function () {
+  parser.onend = function() {
     // sort by date descending
     if (result.episodes) {
-      result.episodes = result.episodes.sort(function (item1, item2) {
+      result.episodes = result.episodes.sort(function(item1, item2) {
         return item2.published.getTime() - item1.published.getTime();
       });
     }

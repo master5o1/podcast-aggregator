@@ -20,7 +20,7 @@ module.exports = feed => {
       date: episode.episode.published,
       description: `${episode.podcast.data.title}: ${episode.episode.description}`,
       itunesSummary: undefined,
-      itunesImage: episode.episode.itunesImage || imageUrl,
+      itunesImage: episode.episode.itunesImage || imageUrl
     });
   }
 

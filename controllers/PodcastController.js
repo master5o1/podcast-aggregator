@@ -65,6 +65,7 @@ router.get('/:id.rss', async (req, res, next) => {
 
     const builder = new PodcastBuilder({
       ...podcast.data,
+      site_url: podcast.data.site_url || podcast.data.link,
       pubDate,
       episodes: []
     });
