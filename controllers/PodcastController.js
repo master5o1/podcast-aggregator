@@ -5,6 +5,7 @@ const passport = require('passport');
 const Podcast = require('../db/models/Podcast');
 const fetchPodcast = require('../utils/fetch-podcast');
 const { mapPodcast, mapEpisode, mapPodcastWithData } = require('../utils/mappers');
+const PodcastBuilder = require('podcast');
 
 const router = express.Router();
 
@@ -62,7 +63,7 @@ router.get('/:id.rss', async (req, res, next) => {
 
     console.log(pubDate);
 
-    const builder = new Podcast({
+    const builder = new PodcastBuilder({
       ...podcast.data,
       pubDate,
       episodes: []
