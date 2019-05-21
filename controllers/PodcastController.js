@@ -80,7 +80,8 @@ router.get('/:id.rss', async (req, res, next) => {
         date: episode.published,
         description: `${podcast.data.title}: ${episode.description}`,
         itunesSummary: undefined,
-        itunesImage: episode.itunesImage || imageUrl
+        itunesImage: episode.itunesImage || imageUrl,
+        url: episode.link
       });
     }
 
