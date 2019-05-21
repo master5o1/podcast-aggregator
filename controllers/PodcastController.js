@@ -4,7 +4,7 @@ const passport = require('passport');
 
 const Podcast = require('../db/models/Podcast');
 const fetchPodcast = require('../utils/fetch-podcast');
-const { mapPodcast, mapPodcastWithData } = require('../utils/mappers');
+const { mapPodcast, mapEpisode, mapPodcastWithData } = require('../utils/mappers');
 
 const router = express.Router();
 
