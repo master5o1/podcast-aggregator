@@ -5,7 +5,7 @@ const mapFeed = (feed, authKey = false) => ({
   podcasts: feed.podcasts.map(mapPodcast)
 });
 
-const mapFeedWithData = (feed) => ({
+const mapFeedWithData = feed => ({
   id: feed.id,
   title: feed.title,
   podcasts: feed.podcasts.map(mapPodcastWithData)
@@ -26,6 +26,7 @@ const mapEpisode = episode => ({
   published: episode.published,
   duration: episode.duration,
   categories: episode.categories,
+  link: episode.link,
   enclosure: {
     filesize: episode.enclosure.filesize,
     type: episode.enclosure.type,
