@@ -57,11 +57,12 @@ router.get('/:id.rss', async (req, res, next) => {
     }
 
     const episodes = podcast.data.episodes;
+
+    episodes.sort((a, b) => new Date(b.episode.published) - new Date(a.episode.published));
+
     const pubDate = episodes.reduce((date, e) => {
       return date < e.published ? e.published : date;
     }, new Date(1970, 01, 01));
-
-    console.log(pubDate);
 
     const builder = new PodcastBuilder({
       ...podcast.data,
